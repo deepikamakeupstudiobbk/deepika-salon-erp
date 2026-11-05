@@ -1,13 +1,18 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import React, { useState } from 'react';
 import { useStudio } from '../context/StudioContext';
-import { Phone, Instagram, Calendar, Award, Star, ExternalLink, Plus, Trash2, ShieldCheck, X, UserPlus, Lock } from 'lucide-react';
+import { Phone, Instagram, Calendar, Award, Star, ExternalLink, Trash2, ShieldCheck, X, UserPlus, Lock } from 'lucide-react';
 import { Employee } from '../types';
 
 export const TeamSection: React.FC = () => {
   const { employees, openBookingModal, session, addEmployee, deleteEmployee, openERPModal, loginAsOwner, showToast } = useStudio();
   const isOwner = session.role === 'owner';
 
-  // Inline delete confirmation state (No window.confirm!)
+  // Inline delete confirmation state
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   // Quick Owner Auth Modal State
@@ -23,17 +28,17 @@ export const TeamSection: React.FC = () => {
   const [newSpecialty, setNewSpecialty] = useState('HD Bridal Airbrush, Dupatta Pinning & South/North Indian Hair Styling');
   const [newSocialHandle, setNewSocialHandle] = useState('@deepikasharma_team');
   const [newInstagramUrl, setNewInstagramUrl] = useState('https://instagram.com/deepikasharmamakeupstudio');
-  const [newAvatar, setNewAvatar] = useState('/src/assets/images/reception_glam_1793361571725.jpg');
+  const [newAvatar, setNewAvatar] = useState('https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?auto=format&fit=crop&q=80&w=600');
   const [newSalary, setNewSalary] = useState('22000');
   const [newCommission, setNewCommission] = useState('10');
   const [newPassword, setNewPassword] = useState('staff@123');
   const [newConfirmPassword, setNewConfirmPassword] = useState('staff@123');
 
   const avatarOptions = [
-    { label: 'Reception Glam Look', url: '/src/assets/images/reception_glam_1793361571725.jpg' },
-    { label: 'Haldi Mehendi Look', url: '/src/assets/images/haldi_mehendi_look_1793361571698.jpg' },
-    { label: 'Bridal Makeover Glow', url: '/src/assets/images/makeover_after_1793361571014.jpg' },
-    { label: 'Hero Bridal Glam', url: '/src/assets/images/hero_bridal_glam_1793361569176.jpg' }
+    { label: 'Bridal Makeover', url: 'https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?auto=format&fit=crop&q=80&w=600' },
+    { label: 'Reception Glam', url: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&q=80&w=600' },
+    { label: 'Haldi Glow', url: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=600' },
+    { label: 'Editorial Look', url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600' }
   ];
 
   const handleAddStylistSubmit = (e: React.FormEvent) => {
@@ -56,6 +61,7 @@ export const TeamSection: React.FC = () => {
     const cleanPass = newPassword.trim();
 
     addEmployee({
+      id: `emp-${Date.now()}`,
       name: newName.trim(),
       role: newRole.trim() || 'Senior Bridal Stylist',
       phone: newPhone.trim(),
@@ -79,9 +85,9 @@ export const TeamSection: React.FC = () => {
       }
     });
 
-    // Reset and close
     setNewName('');
     setIsAddModalOpen(false);
+    showToast(`Successfully added ${newName.trim()} to studio roster!`);
   };
 
   const handleRequestDelete = (employee: Employee) => {
@@ -99,6 +105,7 @@ export const TeamSection: React.FC = () => {
   const handleConfirmDelete = (empId: string) => {
     deleteEmployee(empId, true);
     setConfirmDeleteId(null);
+    showToast('Stylist successfully removed from roster.');
   };
 
   const handleQuickOwnerUnlock = (e?: React.FormEvent) => {
@@ -107,11 +114,13 @@ export const TeamSection: React.FC = () => {
     if (success) {
       setIsOwnerAuthModalOpen(false);
       showToast('Owner access verified! You can now add and remove stylists.');
+    } else {
+      showToast('Incorrect master password. Try "admin".');
     }
   };
 
   return (
-    <section id="artists" className="py-20 bg-stone-950 text-stone-100 border-b border-stone-800">
+    <section id="artists" className="py-16 sm:py-20 bg-stone-950 text-stone-100 border-b border-stone-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
@@ -186,7 +195,7 @@ export const TeamSection: React.FC = () => {
                 key={employee.id}
                 className="flex flex-col justify-between rounded-2xl bg-stone-900/90 border border-stone-800 hover:border-amber-500/40 p-5 transition-all duration-300 shadow-lg group relative"
               >
-                {/* Owner Delete Stylist Button (Inline non-blocking confirmation) */}
+                {/* Owner Delete Stylist Button */}
                 {!isFounder && (
                   confirmDeleteId === employee.id ? (
                     <div className="absolute top-3 right-3 z-30 flex items-center gap-1.5 bg-stone-950 border border-rose-500/80 p-1.5 rounded-xl shadow-2xl animate-in fade-in zoom-in-95">
@@ -218,7 +227,7 @@ export const TeamSection: React.FC = () => {
                 )}
 
                 <div className="space-y-4">
-                  {/* Avatar with gold border */}
+                  {/* Avatar */}
                   <div className="relative mx-auto w-28 h-28 rounded-full overflow-hidden p-[2px] bg-gradient-to-tr from-amber-500 to-rose-400 group-hover:scale-105 transition-transform duration-300">
                     <img
                       src={employee.avatar}
@@ -246,7 +255,6 @@ export const TeamSection: React.FC = () => {
 
                   {/* Contact & Social Links */}
                   <div className="pt-2 border-t border-stone-800/80 space-y-2 text-xs">
-                    {/* Phone Direct */}
                     <a
                       href={`tel:${employee.phone.replace(/\s+/g, '')}`}
                       className="flex items-center justify-between p-2 rounded-lg bg-stone-950/60 hover:bg-stone-950 text-stone-300 hover:text-white transition-colors"
@@ -258,7 +266,6 @@ export const TeamSection: React.FC = () => {
                       <span className="text-[10px] text-stone-400 uppercase tracking-wider">Call</span>
                     </a>
 
-                    {/* Social Handle */}
                     <a
                       href={employee.instagramUrl}
                       target="_blank"
@@ -278,7 +285,7 @@ export const TeamSection: React.FC = () => {
                 <div className="pt-4 mt-4 border-t border-stone-800">
                   <button
                     onClick={() => openBookingModal()}
-                    className="w-full py-2.5 px-3 text-xs font-semibold uppercase tracking-wider bg-stone-800 hover:bg-amber-400 text-stone-200 hover:text-stone-950 rounded-lg transition-colors flex items-center justify-center gap-2"
+                    className="w-full py-2.5 px-3 text-xs font-semibold uppercase tracking-wider bg-stone-800 hover:bg-amber-400 text-stone-200 hover:text-stone-950 rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Calendar className="w-3.5 h-3.5" />
                     <span>Book with {employee.name.split(' ')[0]}</span>
@@ -292,14 +299,11 @@ export const TeamSection: React.FC = () => {
 
       </div>
 
-      {/* ========================================================================= */}
-      {/* OWNER ONLY: ADD NEW BRIDAL ARTIST MODAL */}
-      {/* ========================================================================= */}
+      {/* ADD STYLIST MODAL */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
           <div className="relative w-full max-w-lg bg-stone-950 border border-stone-800 rounded-2xl shadow-2xl overflow-hidden my-6 animate-in fade-in zoom-in-95 duration-200">
             
-            {/* Modal Header */}
             <div className="p-5 bg-stone-900 border-b border-stone-800 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className="p-2 rounded-lg bg-amber-400/20 text-amber-300 border border-amber-400/30">
@@ -317,15 +321,13 @@ export const TeamSection: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsAddModalOpen(false)}
-                className="p-1.5 text-stone-400 hover:text-white rounded-lg bg-stone-850 hover:bg-stone-800 transition-colors"
+                className="p-1.5 text-stone-400 hover:text-white rounded-lg bg-stone-850 hover:bg-stone-800 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Modal Form */}
             <form onSubmit={handleAddStylistSubmit} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto text-xs">
-              
               <div>
                 <label className="text-[11px] text-stone-300 font-medium block mb-1">
                   Artist Full Name *
@@ -437,13 +439,13 @@ export const TeamSection: React.FC = () => {
                       key={opt.url}
                       type="button"
                       onClick={() => setNewAvatar(opt.url)}
-                      className={`p-1 rounded-xl border text-center transition-all ${
+                      className={`p-1 rounded-xl border text-center transition-all cursor-pointer ${
                         newAvatar === opt.url
                           ? 'border-amber-400 bg-amber-950/40'
                           : 'border-stone-800 bg-stone-900 hover:border-stone-700'
                       }`}
                     >
-                      <img src={opt.url} alt={opt.label} className="w-14 h-14 rounded-lg object-cover mx-auto" />
+                      <img src={opt.url} alt={opt.label} className="w-14 h-14 rounded-lg object-cover mx-auto" referrerPolicy="no-referrer" />
                       <span className="text-[9px] text-stone-300 block truncate mt-1">{opt.label}</span>
                     </button>
                   ))}
@@ -475,18 +477,17 @@ export const TeamSection: React.FC = () => {
                 </div>
               </div>
 
-              {/* Submit Button */}
               <div className="pt-3 border-t border-stone-800 flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2 text-stone-400 hover:text-white transition-colors"
+                  className="px-4 py-2 text-stone-400 hover:text-white transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 bg-gradient-to-r from-amber-300 to-amber-400 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-bold uppercase tracking-wider text-xs rounded-xl shadow transition-all"
+                  className="px-5 py-2.5 bg-gradient-to-r from-amber-300 to-amber-400 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-bold uppercase tracking-wider text-xs rounded-xl shadow transition-all cursor-pointer"
                 >
                   Confirm & Add Stylist
                 </button>
@@ -498,9 +499,7 @@ export const TeamSection: React.FC = () => {
         </div>
       )}
 
-      {/* ========================================================================= */}
       {/* QUICK OWNER AUTH MODAL */}
-      {/* ========================================================================= */}
       {isOwnerAuthModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md">
           <div className="relative w-full max-w-md bg-stone-950 border border-stone-800 rounded-2xl shadow-2xl overflow-hidden p-6 space-y-5 animate-in fade-in zoom-in-95">
@@ -517,7 +516,7 @@ export const TeamSection: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsOwnerAuthModalOpen(false)}
-                className="p-1.5 text-stone-400 hover:text-white rounded-lg bg-stone-900 hover:bg-stone-850"
+                className="p-1.5 text-stone-400 hover:text-white rounded-lg bg-stone-900 hover:bg-stone-850 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -544,7 +543,7 @@ export const TeamSection: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsOwnerAuthModalOpen(false)}
-                  className="px-3 py-2 text-stone-400 hover:text-white"
+                  className="px-3 py-2 text-stone-400 hover:text-white cursor-pointer"
                 >
                   Cancel
                 </button>
