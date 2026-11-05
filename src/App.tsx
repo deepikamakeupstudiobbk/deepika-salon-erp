@@ -27,7 +27,7 @@ const StudioAppContent: React.FC = () => {
   const { toastMessage } = useStudio();
 
   return (
-    <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col font-sans-clean selection:bg-amber-400 selection:text-stone-950">
+    <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col font-sans-clean selection:bg-amber-400 selection:text-stone-950 overflow-x-hidden">
       
       {/* Toast Alert Notification */}
       {toastMessage && (
@@ -39,9 +39,9 @@ const StudioAppContent: React.FC = () => {
         </div>
       )}
 
-      {/* Main Sections */}
+      {/* Main Sections with optimized spacing for 100% display zoom */}
       <Navbar />
-      <main className="flex-1">
+      <main className="flex-1 pt-20 lg:pt-24">
         <Hero />
         <BeforeAfterSlider />
         <ServicesSection />
