@@ -1,15 +1,19 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import React, { useState } from 'react';
 import { ACADEMY_COURSES, STUDIO_INFO, ACADEMY_CERTIFICATE_SAMPLE } from '../data/initialData';
-import { GraduationCap, Award, BookOpen, CheckCircle, ArrowRight, Clock, Calendar, Sparkles, Eye, X, Maximize2 } from 'lucide-react';
+import { GraduationCap, Award, BookOpen, CheckCircle, ArrowRight, Clock, Sparkles, Eye, X, Maximize2 } from 'lucide-react';
 import { useStudio } from '../context/StudioContext';
 
 export const AcademySection: React.FC = () => {
   const { openLeadModal } = useStudio();
-  const [selectedCourse, setSelectedCourse] = useState(ACADEMY_COURSES[0]);
   const [isCertificateModalOpen, setIsCertificateModalOpen] = useState(false);
 
   return (
-    <section id="academy" className="py-20 bg-stone-900 text-stone-100 border-b border-stone-800">
+    <section id="academy" className="py-16 sm:py-20 bg-stone-900 text-stone-100 border-b border-stone-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
@@ -96,9 +100,7 @@ export const AcademySection: React.FC = () => {
           ))}
         </div>
 
-        {/* ========================================================================= */}
-        {/* OFFICIAL ACADEMY CERTIFICATE SAMPLE SHOWCASE (USER REQUIREMENT) */}
-        {/* ========================================================================= */}
+        {/* OFFICIAL ACADEMY CERTIFICATE SAMPLE SHOWCASE */}
         <div className="mt-14 p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-stone-950 via-stone-900 to-stone-950 border border-amber-500/40 shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -111,6 +113,7 @@ export const AcademySection: React.FC = () => {
                   alt="Deepika Sharma Makeup Studio & Academy Official Certificate Sample"
                   className="w-full h-auto rounded-xl object-cover shadow-inner group-hover:scale-[1.02] transition-transform duration-500 cursor-pointer"
                   onClick={() => setIsCertificateModalOpen(true)}
+                  referrerPolicy="no-referrer"
                 />
                 
                 <div 
@@ -231,9 +234,7 @@ export const AcademySection: React.FC = () => {
 
       </div>
 
-      {/* ========================================================================= */}
       {/* CERTIFICATE FULL PREVIEW LIGHTBOX MODAL */}
-      {/* ========================================================================= */}
       {isCertificateModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-md animate-in fade-in duration-200">
           <div className="relative w-full max-w-4xl max-h-[95vh] bg-stone-950 border border-amber-500/50 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
@@ -245,7 +246,7 @@ export const AcademySection: React.FC = () => {
                 </div>
                 <div>
                   <h4 className="font-serif-luxury text-base font-bold text-white">
-                    Deepika Sharma Makeup Studio & Academy
+                    {STUDIO_INFO.name}
                   </h4>
                   <p className="text-[11px] text-amber-300 font-mono">
                     Official Certificate Sample · Barabanki, Uttar Pradesh
@@ -256,7 +257,7 @@ export const AcademySection: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsCertificateModalOpen(false)}
-                className="p-1.5 text-stone-400 hover:text-white rounded-lg bg-stone-800 hover:bg-stone-750 transition-colors cursor-pointer"
+                className="p-1.5 text-stone-400 hover:text-white rounded-lg bg-stone-800 hover:bg-stone-700 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -269,6 +270,7 @@ export const AcademySection: React.FC = () => {
                   src={ACADEMY_CERTIFICATE_SAMPLE}
                   alt="Deepika Sharma Makeup Studio & Academy Certificate Sample Full View"
                   className="w-full h-auto object-contain"
+                  referrerPolicy="no-referrer"
                 />
               </div>
             </div>
@@ -276,7 +278,7 @@ export const AcademySection: React.FC = () => {
             {/* Modal Footer */}
             <div className="p-4 bg-stone-900 border-t border-stone-800 flex flex-wrap items-center justify-between gap-3 text-xs">
               <span className="text-stone-300">
-                Issued upon completion of 6-Week Master Makeup & Cosmetology Diploma course.
+                Issued upon completion of Master Makeup & Cosmetology Diploma course.
               </span>
               <button
                 type="button"
