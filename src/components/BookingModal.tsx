@@ -151,7 +151,6 @@ export const BookingModal: React.FC = () => {
         setM2Amount(effectiveTotalAmount - half);
         setM3Amount(0);
       } else {
-        // Standard 2-milestone: Token advance + Wedding day clearance
         const token = effectiveAdvanceRequired > 0 && effectiveAdvanceRequired < effectiveTotalAmount
           ? effectiveAdvanceRequired
           : Math.round(effectiveTotalAmount * 0.25);
@@ -162,14 +161,12 @@ export const BookingModal: React.FC = () => {
       setM1Title('Milestone 1: Booking Advance Token to Lock Event Date');
       setM2Title('Milestone 2: Final Settlement on Wedding Day');
     } else {
-      // 3 Milestones
       if (milestonePreset === 'equal') {
         const oneThird = Math.round(effectiveTotalAmount / 3);
         setM1Amount(oneThird);
         setM2Amount(oneThird);
         setM3Amount(Math.max(0, effectiveTotalAmount - (oneThird * 2)));
       } else {
-        // Standard Bridal Milestone (e.g. ~20% Token, ~40% Pre-bridal Trial, ~40% Wedding Day)
         const token = effectiveAdvanceRequired > 0 && effectiveAdvanceRequired < effectiveTotalAmount
           ? effectiveAdvanceRequired
           : Math.round(effectiveTotalAmount * 0.2);
@@ -187,7 +184,6 @@ export const BookingModal: React.FC = () => {
     }
   }, [effectiveTotalAmount, effectiveAdvanceRequired, milestoneCount, milestonePreset]);
 
-  // Current milestone sum and balancing calculation
   const currentMilestonesSum = useMemo(() => {
     if (milestoneCount === 1) return m1Amount;
     if (milestoneCount === 2) return m1Amount + m2Amount;
@@ -197,7 +193,6 @@ export const BookingModal: React.FC = () => {
   const milestoneDiscrepancy = effectiveTotalAmount - currentMilestonesSum;
   const isMilestonesBalanced = Math.abs(milestoneDiscrepancy) === 0;
 
-  // Auto-balance button handler
   const handleAutoBalance = () => {
     if (milestoneCount === 1) {
       setM1Amount(effectiveTotalAmount);
@@ -210,7 +205,6 @@ export const BookingModal: React.FC = () => {
     }
   };
 
-  // Handle service selector change
   const handleServiceSelectChange = (val: string) => {
     setSelectedServiceId(val);
     if (val === 'custom_manual') {
@@ -248,10 +242,8 @@ export const BookingModal: React.FC = () => {
       const generatedTxn = `TXN-${paymentMethod.toUpperCase()}-${Math.floor(10000000 + Math.random() * 90000000)}`;
       const newBkId = `BK-BBK-${Math.floor(200 + Math.random() * 800)}`;
 
-      // Construct Part-Wise Installment Schedule based on active milestone configuration
       const generatedParts: PartPayment[] = [];
 
-      // Milestone 1 (Always paid online now)
       generatedParts.push({
         id: `PAY-${newBkId}-1`,
         partNumber: 1,
@@ -266,7 +258,6 @@ export const BookingModal: React.FC = () => {
         notes: 'Advance token verified and locked via gateway checkout.'
       });
 
-      // Milestone 2 (If configured)
       if (milestoneCount >= 2 && m2Amount > 0) {
         generatedParts.push({
           id: `PAY-${newBkId}-2`,
@@ -283,7 +274,6 @@ export const BookingModal: React.FC = () => {
         });
       }
 
-      // Milestone 3 (If configured)
       if (milestoneCount === 3 && m3Amount > 0) {
         generatedParts.push({
           id: `PAY-${newBkId}-3`,
@@ -345,7 +335,7 @@ export const BookingModal: React.FC = () => {
         <div className="p-5 sm:p-6 bg-stone-900 border-b border-stone-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full overflow-hidden border border-amber-400/80 shadow bg-stone-950 shrink-0">
-              <img src={STUDIO_LOGO} alt="Deepika Sharma Monogram" className="w-full h-full object-cover" />
+              <img src={STUDIO_LOGO} alt="Deepika Sharma Monogram" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
             </div>
             <div>
               <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-amber-300 font-bold">
@@ -362,7 +352,7 @@ export const BookingModal: React.FC = () => {
 
           <button
             onClick={closeBookingModal}
-            className="p-2 text-stone-400 hover:text-white rounded-full bg-stone-800/80 hover:bg-stone-800 transition-colors"
+            className="p-2 text-stone-400 hover:text-white rounded-full bg-stone-800/80 hover:bg-stone-800 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -398,7 +388,7 @@ export const BookingModal: React.FC = () => {
                 <select
                   value={isCustomService ? 'custom_manual' : selectedServiceId}
                   onChange={(e) => handleServiceSelectChange(e.target.value)}
-                  className="w-full p-2.5 rounded-lg bg-stone-900 border border-stone-700 text-stone-100 text-sm focus:outline-none focus:border-amber-400"
+                  className="w-full p-2.5 rounded-lg bg-stone-900 border border-stone-700 text-stone-100 text-sm focus:outline-none focus:border-amber-400 cursor-pointer"
                 >
                   <optgroup label="Standard Studio Bridal Packages">
                     {services.map((s) => (
@@ -415,7 +405,7 @@ export const BookingModal: React.FC = () => {
                 </select>
               </div>
 
-              {/* MANUAL / CUSTOM SERVICE INPUT FIELDS (Owner & Employee & Client Custom Quote) */}
+              {/* MANUAL / CUSTOM SERVICE INPUT FIELDS */}
               {isCustomService && (
                 <div className="p-4 rounded-xl bg-amber-950/20 border border-amber-500/40 space-y-3.5 animate-in fade-in duration-200">
                   <div className="flex items-center gap-2 text-xs font-bold text-amber-300 uppercase tracking-wider">
@@ -485,7 +475,7 @@ export const BookingModal: React.FC = () => {
                 <select
                   value={selectedArtistId}
                   onChange={(e) => setSelectedArtistId(e.target.value)}
-                  className="w-full p-2.5 rounded-lg bg-stone-900 border border-stone-700 text-stone-200 text-sm focus:outline-none focus:border-amber-400"
+                  className="w-full p-2.5 rounded-lg bg-stone-900 border border-stone-700 text-stone-200 text-sm focus:outline-none focus:border-amber-400 cursor-pointer"
                 >
                   {employees.map((emp) => (
                     <option key={emp.id} value={emp.id}>
@@ -521,7 +511,7 @@ export const BookingModal: React.FC = () => {
                 <select
                   value={bookingTime}
                   onChange={(e) => setBookingTime(e.target.value)}
-                  className="w-full p-2.5 rounded-lg bg-stone-900 border border-stone-700 text-stone-200 text-sm focus:outline-none focus:border-amber-400"
+                  className="w-full p-2.5 rounded-lg bg-stone-900 border border-stone-700 text-stone-200 text-sm focus:outline-none focus:border-amber-400 cursor-pointer"
                 >
                   <option value="08:00 AM">08:00 AM (Morning Pooja / Haldi)</option>
                   <option value="11:30 AM">11:30 AM (Afternoon Luncheon)</option>
@@ -541,7 +531,7 @@ export const BookingModal: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setLocationType('venue')}
-                  className={`p-3 rounded-xl border text-left text-xs transition-colors ${
+                  className={`p-3 rounded-xl border text-left text-xs transition-colors cursor-pointer ${
                     locationType === 'venue'
                       ? 'border-amber-400 bg-amber-950/30 text-amber-200 font-semibold'
                       : 'border-stone-800 bg-stone-900 text-stone-400 hover:border-stone-700'
@@ -555,7 +545,7 @@ export const BookingModal: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setLocationType('studio')}
-                  className={`p-3 rounded-xl border text-left text-xs transition-colors ${
+                  className={`p-3 rounded-xl border text-left text-xs transition-colors cursor-pointer ${
                     locationType === 'studio'
                       ? 'border-amber-400 bg-amber-950/30 text-amber-200 font-semibold'
                       : 'border-stone-800 bg-stone-900 text-stone-400 hover:border-stone-700'
@@ -563,7 +553,7 @@ export const BookingModal: React.FC = () => {
                 >
                   <Sparkles className="w-4 h-4 text-amber-400 mb-1" />
                   <span className="block font-medium">Deepika Sharma Studio</span>
-                  <span className="text-[10px] text-stone-400">Behind Akash Palace, Lakhpedabagh</span>
+                  <span className="text-[10px] text-stone-400">Behind Akash Palace, Barabanki</span>
                 </button>
               </div>
 
@@ -629,12 +619,8 @@ export const BookingModal: React.FC = () => {
               />
             </div>
 
-            {/* ========================================================================= */}
-            {/* MILESTONE PAYMENT TRACKER (1, 2, or 3 Installments with Dates & Services) */}
-            {/* ========================================================================= */}
+            {/* MILESTONE PAYMENT TRACKER */}
             <div className="p-4 sm:p-5 rounded-2xl bg-stone-900/95 border border-amber-500/40 space-y-4 shadow-xl">
-              
-              {/* Tracker Header */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-stone-800">
                 <div className="flex items-start sm:items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-amber-400/10 border border-amber-400/30 flex items-center justify-center shrink-0 text-amber-300">
@@ -655,12 +641,11 @@ export const BookingModal: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Milestone Count Segmented Control */}
                 <div className="flex items-center bg-stone-950 p-1 rounded-xl border border-stone-800 self-start sm:self-auto">
                   <button
                     type="button"
                     onClick={() => setMilestoneCount(1)}
-                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all ${
+                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all cursor-pointer ${
                       milestoneCount === 1
                         ? 'bg-amber-400 text-stone-950 font-bold shadow-sm'
                         : 'text-stone-400 hover:text-white'
@@ -671,7 +656,7 @@ export const BookingModal: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setMilestoneCount(2)}
-                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all ${
+                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all cursor-pointer ${
                       milestoneCount === 2
                         ? 'bg-amber-400 text-stone-950 font-bold shadow-sm'
                         : 'text-stone-400 hover:text-white'
@@ -682,7 +667,7 @@ export const BookingModal: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setMilestoneCount(3)}
-                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all ${
+                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all cursor-pointer ${
                       milestoneCount === 3
                         ? 'bg-amber-400 text-stone-950 font-bold shadow-sm'
                         : 'text-stone-400 hover:text-white'
@@ -693,600 +678,332 @@ export const BookingModal: React.FC = () => {
                 </div>
               </div>
 
-              {/* Milestone Preset Split Bar */}
-              {milestoneCount > 1 && (
-                <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-                  <span className="text-[11px] text-stone-400">Installment Preset:</span>
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <button
-                      type="button"
-                      onClick={() => setMilestonePreset('standard')}
-                      className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors ${
-                        milestonePreset === 'standard'
-                          ? 'bg-amber-400/20 text-amber-300 border border-amber-400/50'
-                          : 'bg-stone-950 text-stone-400 hover:text-stone-200 border border-stone-800'
-                      }`}
-                    >
-                      {milestoneCount === 3 ? 'Standard Bridal (20% - 40% - 40%)' : 'Standard (Token + Wedding Day)'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setMilestonePreset('equal')}
-                      className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors ${
-                        milestonePreset === 'equal'
-                          ? 'bg-amber-400/20 text-amber-300 border border-amber-400/50'
-                          : 'bg-stone-950 text-stone-400 hover:text-stone-200 border border-stone-800'
-                      }`}
-                    >
-                      {milestoneCount === 3 ? 'Equal Split (33% × 3)' : 'Equal Split (50% - 50%)'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setMilestonePreset('custom')}
-                      className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors ${
-                        milestonePreset === 'custom'
-                          ? 'bg-amber-400/20 text-amber-300 border border-amber-400/50'
-                          : 'bg-stone-950 text-stone-400 hover:text-stone-200 border border-stone-800'
-                      }`}
-                    >
-                      Custom Amounts
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Visual Milestone Progress Tracker Bar */}
-              <div className="p-3 rounded-xl bg-stone-950 border border-stone-800/80 space-y-2">
-                <div className="flex items-center justify-between text-[11px] text-stone-400">
-                  <span className="font-semibold text-stone-300 uppercase tracking-wider text-[10px]">
-                    Milestone Allocation Timeline
-                  </span>
-                  <span className="font-mono text-white">
-                    Total: ₹{effectiveTotalAmount.toLocaleString('en-IN')}
-                  </span>
-                </div>
-
-                {/* Proportional Segment Bar */}
-                <div className="h-4 rounded-lg bg-stone-900 overflow-hidden flex p-0.5 gap-1 border border-stone-800">
-                  <div
-                    style={{ width: `${effectiveTotalAmount > 0 ? Math.max(10, Math.min(100, (m1Amount / effectiveTotalAmount) * 100)) : 100}%` }}
-                    className="h-full bg-emerald-500 rounded flex items-center justify-center text-[9px] font-bold text-stone-950 font-mono transition-all"
-                    title={`Milestone 1: ₹${m1Amount.toLocaleString('en-IN')}`}
-                  >
-                    M1 ({effectiveTotalAmount > 0 ? Math.round((m1Amount / effectiveTotalAmount) * 100) : 100}%)
-                  </div>
-
-                  {milestoneCount >= 2 && m2Amount > 0 && (
-                    <div
-                      style={{ width: `${effectiveTotalAmount > 0 ? Math.max(10, Math.min(100, (m2Amount / effectiveTotalAmount) * 100)) : 0}%` }}
-                      className="h-full bg-amber-400 rounded flex items-center justify-center text-[9px] font-bold text-stone-950 font-mono transition-all"
-                      title={`Milestone 2: ₹${m2Amount.toLocaleString('en-IN')}`}
-                    >
-                      M2 ({effectiveTotalAmount > 0 ? Math.round((m2Amount / effectiveTotalAmount) * 100) : 0}%)
-                    </div>
-                  )}
-
-                  {milestoneCount === 3 && m3Amount > 0 && (
-                    <div
-                      style={{ width: `${effectiveTotalAmount > 0 ? Math.max(10, Math.min(100, (m3Amount / effectiveTotalAmount) * 100)) : 0}%` }}
-                      className="h-full bg-sky-400 rounded flex items-center justify-center text-[9px] font-bold text-stone-950 font-mono transition-all"
-                      title={`Milestone 3: ₹${m3Amount.toLocaleString('en-IN')}`}
-                    >
-                      M3 ({effectiveTotalAmount > 0 ? Math.round((m3Amount / effectiveTotalAmount) * 100) : 0}%)
-                    </div>
-                  )}
-                </div>
-
-                {/* Milestone Nodes Overview */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 text-[11px]">
-                  <div className="flex items-center gap-1.5 text-emerald-400">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
-                    <span className="font-medium">M1: Pay Now (₹{m1Amount.toLocaleString('en-IN')})</span>
-                  </div>
-
-                  {milestoneCount >= 2 && (
-                    <div className="flex items-center gap-1.5 text-amber-300">
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
-                      <span className="font-medium">
-                        M2: Due {m2Date} (₹{m2Amount.toLocaleString('en-IN')})
-                      </span>
-                    </div>
-                  )}
-
-                  {milestoneCount === 3 && (
-                    <div className="flex items-center gap-1.5 text-sky-400">
-                      <span className="w-1.5 h-1.5 rounded-full bg-sky-400 shrink-0" />
-                      <span className="font-medium">
-                        M3: Due {m3Date} (₹{m3Amount.toLocaleString('en-IN')})
-                      </span>
-                    </div>
-                  )}
-                </div>
+              {/* Milestone Preset buttons */}
+              <div className="flex items-center gap-2 text-xs">
+                <span className="text-stone-400">Preset Strategy:</span>
+                <button
+                  type="button"
+                  onClick={() => setMilestonePreset('standard')}
+                  className={`px-2.5 py-1 rounded border text-[11px] transition-colors cursor-pointer ${
+                    milestonePreset === 'standard'
+                      ? 'border-amber-400 bg-amber-950/40 text-amber-200 font-semibold'
+                      : 'border-stone-800 bg-stone-950 text-stone-400 hover:text-white'
+                  }`}
+                >
+                  Standard Bridal (Advance + Trial + Final)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMilestonePreset('equal')}
+                  className={`px-2.5 py-1 rounded border text-[11px] transition-colors cursor-pointer ${
+                    milestonePreset === 'equal'
+                      ? 'border-amber-400 bg-amber-950/40 text-amber-200 font-semibold'
+                      : 'border-stone-800 bg-stone-950 text-stone-400 hover:text-white'
+                  }`}
+                >
+                  Equal Splits
+                </button>
               </div>
 
-              {/* INDIVIDUAL MILESTONE INPUT CARDS */}
+              {/* Installment Breakdown Cards */}
               <div className="space-y-3">
-                
-                {/* MILESTONE 1 CARD */}
-                <div className="p-3.5 rounded-xl bg-stone-950 border border-emerald-500/40 space-y-2.5">
+                {/* Milestone 1 */}
+                <div className="p-3.5 rounded-xl bg-stone-950 border border-stone-800 space-y-2">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800/80">
-                        Milestone 1 · Advance Token
-                      </span>
-                      <span className="text-[11px] text-emerald-400/80 font-medium hidden sm:inline">
-                        (Payable Today at Step 2 to Lock Date)
-                      </span>
-                    </div>
-                    <span className="font-mono text-sm font-bold text-white">
-                      ₹{m1Amount.toLocaleString('en-IN')}{' '}
-                      <span className="text-[10px] text-stone-400 font-normal">
-                        ({effectiveTotalAmount > 0 ? Math.round((m1Amount / effectiveTotalAmount) * 100) : 100}%)
-                      </span>
-                    </span>
+                    <span className="text-xs font-bold text-amber-300">Milestone 1 (Paid Now as Advance Token)</span>
+                    <span className="text-[11px] font-mono text-amber-400">Due Today</span>
                   </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 text-xs">
-                    <div className="sm:col-span-6">
-                      <label className="text-[10px] text-stone-400 block mb-1">
-                        Milestone 1 Deliverable / Description
-                      </label>
-                      <input
-                        type="text"
-                        value={m1Title}
-                        onChange={(e) => {
-                          setM1Title(e.target.value);
-                          setMilestonePreset('custom');
-                        }}
-                        className="w-full p-2 rounded-lg bg-stone-900 border border-stone-700 text-stone-200 text-xs focus:outline-none focus:border-amber-400"
-                        placeholder="e.g. Booking Advance Token to Lock Event Date"
-                      />
-                    </div>
-
-                    <div className="sm:col-span-3">
-                      <div className="flex items-center justify-between mb-1">
-                        <label className="text-[10px] text-stone-400">Payment Date</label>
-                        <button
-                          type="button"
-                          onClick={() => setM1Date(new Date().toISOString().split('T')[0])}
-                          className="text-[9px] text-amber-300 hover:underline"
-                        >
-                          Today
-                        </button>
-                      </div>
-                      <input
-                        type="date"
-                        value={m1Date}
-                        onChange={(e) => setM1Date(e.target.value)}
-                        className="w-full p-2 rounded-lg bg-stone-900 border border-stone-700 text-stone-200 text-xs focus:outline-none focus:border-amber-400"
-                      />
-                    </div>
-
-                    <div className="sm:col-span-3">
-                      <label className="text-[10px] text-stone-400 block mb-1">Milestone Amount (₹)</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      value={m1Title}
+                      onChange={(e) => setM1Title(e.target.value)}
+                      placeholder="Milestone title"
+                      className="p-1.5 rounded bg-stone-900 border border-stone-700 text-xs text-stone-200"
+                    />
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-stone-400">₹</span>
                       <input
                         type="number"
-                        min="500"
                         value={m1Amount}
                         onChange={(e) => {
-                          setM1Amount(Math.max(0, parseFloat(e.target.value) || 0));
+                          setM1Amount(Number(e.target.value));
                           setMilestonePreset('custom');
                         }}
-                        className="w-full p-2 rounded-lg bg-stone-900 border border-emerald-500/50 text-emerald-400 font-mono font-bold text-xs focus:outline-none focus:border-amber-400"
+                        className="w-full p-1.5 rounded bg-stone-900 border border-stone-700 text-xs font-mono font-bold text-amber-300"
                       />
                     </div>
                   </div>
                 </div>
 
-                {/* MILESTONE 2 CARD */}
+                {/* Milestone 2 */}
                 {milestoneCount >= 2 && (
-                  <div className="p-3.5 rounded-xl bg-stone-950 border border-amber-500/30 space-y-2.5">
+                  <div className="p-3.5 rounded-xl bg-stone-950 border border-stone-800 space-y-2 animate-in fade-in">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800/80">
-                          {milestoneCount === 2 ? 'Milestone 2 · Final Balance' : 'Milestone 2 · Mid-Way / Trial Session'}
-                        </span>
-                        <span className="text-[11px] text-amber-300/80 font-medium hidden sm:inline">
-                          {milestoneCount === 2 ? '(Due on wedding ceremony day)' : '(Consultation & draping trial)'}
-                        </span>
-                      </div>
-                      <span className="font-mono text-sm font-bold text-white">
-                        ₹{m2Amount.toLocaleString('en-IN')}{' '}
-                        <span className="text-[10px] text-stone-400 font-normal">
-                          ({effectiveTotalAmount > 0 ? Math.round((m2Amount / effectiveTotalAmount) * 100) : 0}%)
-                        </span>
+                      <span className="text-xs font-bold text-stone-200">
+                        {milestoneCount === 2 ? 'Milestone 2 (Wedding Day Settlement)' : 'Milestone 2 (Pre-Bridal Trial Session)'}
                       </span>
+                      <input
+                        type="date"
+                        value={m2Date}
+                        onChange={(e) => setM2Date(e.target.value)}
+                        className="p-1 rounded bg-stone-900 border border-stone-700 text-[11px] text-stone-300 font-mono"
+                      />
                     </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 text-xs">
-                      <div className="sm:col-span-6">
-                        <label className="text-[10px] text-stone-400 block mb-1">
-                          Milestone 2 Deliverable / Service Name
-                        </label>
-                        <input
-                          type="text"
-                          value={m2Title}
-                          onChange={(e) => {
-                            setM2Title(e.target.value);
-                            setMilestonePreset('custom');
-                          }}
-                          className="w-full p-2 rounded-lg bg-stone-900 border border-stone-700 text-stone-200 text-xs focus:outline-none focus:border-amber-400"
-                          placeholder={milestoneCount === 2 ? "Final Wedding Settlement" : "Pre-Bridal Consultation & Hair Draping Trial"}
-                        />
-                      </div>
-
-                      <div className="sm:col-span-3">
-                        <div className="flex items-center justify-between mb-1">
-                          <label className="text-[10px] text-stone-400">Scheduled Due Date</label>
-                          {milestoneCount === 3 && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                try {
-                                  const d = new Date(bookingDate);
-                                  d.setDate(d.getDate() - 7);
-                                  setM2Date(d.toISOString().split('T')[0]);
-                                } catch {}
-                              }}
-                              className="text-[9px] text-amber-300 hover:underline"
-                            >
-                              -7 Days
-                            </button>
-                          )}
-                        </div>
-                        <input
-                          type="date"
-                          value={m2Date}
-                          onChange={(e) => setM2Date(e.target.value)}
-                          className="w-full p-2 rounded-lg bg-stone-900 border border-stone-700 text-stone-200 text-xs focus:outline-none focus:border-amber-400"
-                        />
-                      </div>
-
-                      <div className="sm:col-span-3">
-                        <label className="text-[10px] text-stone-400 block mb-1">Milestone Amount (₹)</label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <input
+                        type="text"
+                        value={m2Title}
+                        onChange={(e) => setM2Title(e.target.value)}
+                        placeholder="Milestone title"
+                        className="p-1.5 rounded bg-stone-900 border border-stone-700 text-xs text-stone-200"
+                      />
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-stone-400">₹</span>
                         <input
                           type="number"
-                          min="0"
                           value={m2Amount}
                           onChange={(e) => {
-                            setM2Amount(Math.max(0, parseFloat(e.target.value) || 0));
+                            setM2Amount(Number(e.target.value));
                             setMilestonePreset('custom');
                           }}
-                          className="w-full p-2 rounded-lg bg-stone-900 border border-stone-700 text-amber-300 font-mono font-bold text-xs focus:outline-none focus:border-amber-400"
+                          className="w-full p-1.5 rounded bg-stone-900 border border-stone-700 text-xs font-mono font-bold text-stone-200"
                         />
                       </div>
                     </div>
                   </div>
                 )}
 
-                {/* MILESTONE 3 CARD */}
+                {/* Milestone 3 */}
                 {milestoneCount === 3 && (
-                  <div className="p-3.5 rounded-xl bg-stone-950 border border-sky-500/30 space-y-2.5">
+                  <div className="p-3.5 rounded-xl bg-stone-950 border border-stone-800 space-y-2 animate-in fade-in">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800/80">
-                          Milestone 3 · Wedding Day Settlement
-                        </span>
-                        <span className="text-[11px] text-sky-300/80 font-medium hidden sm:inline">
-                          (Final clearance before bridal departure)
-                        </span>
-                      </div>
-                      <span className="font-mono text-sm font-bold text-white">
-                        ₹{m3Amount.toLocaleString('en-IN')}{' '}
-                        <span className="text-[10px] text-stone-400 font-normal">
-                          ({effectiveTotalAmount > 0 ? Math.round((m3Amount / effectiveTotalAmount) * 100) : 0}%)
-                        </span>
-                      </span>
+                      <span className="text-xs font-bold text-stone-200">Milestone 3 (Final Makeover Settlement)</span>
+                      <input
+                        type="date"
+                        value={m3Date}
+                        onChange={(e) => setM3Date(e.target.value)}
+                        className="p-1 rounded bg-stone-900 border border-stone-700 text-[11px] text-stone-300 font-mono"
+                      />
                     </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 text-xs">
-                      <div className="sm:col-span-6">
-                        <label className="text-[10px] text-stone-400 block mb-1">
-                          Milestone 3 Deliverable / Final Service
-                        </label>
-                        <input
-                          type="text"
-                          value={m3Title}
-                          onChange={(e) => {
-                            setM3Title(e.target.value);
-                            setMilestonePreset('custom');
-                          }}
-                          className="w-full p-2 rounded-lg bg-stone-900 border border-stone-700 text-stone-200 text-xs focus:outline-none focus:border-amber-400"
-                          placeholder="Final Makeover Settlement on Wedding Day"
-                        />
-                      </div>
-
-                      <div className="sm:col-span-3">
-                        <div className="flex items-center justify-between mb-1">
-                          <label className="text-[10px] text-stone-400">Wedding Due Date</label>
-                          <button
-                            type="button"
-                            onClick={() => setM3Date(bookingDate)}
-                            className="text-[9px] text-sky-300 hover:underline"
-                          >
-                            Wedding
-                          </button>
-                        </div>
-                        <input
-                          type="date"
-                          value={m3Date}
-                          onChange={(e) => setM3Date(e.target.value)}
-                          className="w-full p-2 rounded-lg bg-stone-900 border border-stone-700 text-stone-200 text-xs focus:outline-none focus:border-amber-400"
-                        />
-                      </div>
-
-                      <div className="sm:col-span-3">
-                        <label className="text-[10px] text-stone-400 block mb-1">Milestone Amount (₹)</label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <input
+                        type="text"
+                        value={m3Title}
+                        onChange={(e) => setM3Title(e.target.value)}
+                        placeholder="Milestone title"
+                        className="p-1.5 rounded bg-stone-900 border border-stone-700 text-xs text-stone-200"
+                      />
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-stone-400">₹</span>
                         <input
                           type="number"
-                          min="0"
                           value={m3Amount}
                           onChange={(e) => {
-                            setM3Amount(Math.max(0, parseFloat(e.target.value) || 0));
+                            setM3Amount(Number(e.target.value));
                             setMilestonePreset('custom');
                           }}
-                          className="w-full p-2 rounded-lg bg-stone-900 border border-stone-700 text-sky-300 font-mono font-bold text-xs focus:outline-none focus:border-amber-400"
+                          className="w-full p-1.5 rounded bg-stone-900 border border-stone-700 text-xs font-mono font-bold text-stone-200"
                         />
                       </div>
                     </div>
                   </div>
                 )}
-
               </div>
 
-              {/* LIVE RECONCILIATION & AUTO-BALANCE FOOTER */}
-              <div className={`p-3 rounded-xl border flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs transition-colors ${
-                isMilestonesBalanced
-                  ? 'bg-emerald-950/20 border-emerald-500/40 text-emerald-300'
-                  : 'bg-amber-950/30 border-amber-500/50 text-amber-200'
-              }`}>
+              {/* Validation & Balance check banner */}
+              <div className="flex items-center justify-between pt-2 border-t border-stone-800 text-xs">
                 <div className="flex items-center gap-2">
                   {isMilestonesBalanced ? (
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span className="flex items-center gap-1 text-emerald-400 font-medium">
+                      <CheckCircle2 className="w-4 h-4" /> Installments sum matches Total (₹{effectiveTotalAmount.toLocaleString('en-IN')})
+                    </span>
                   ) : (
-                    <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span className="flex items-center gap-1 text-rose-400 font-medium">
+                      <AlertCircle className="w-4 h-4" /> Discrepancy of ₹{Math.abs(milestoneDiscrepancy).toLocaleString('en-IN')}
+                    </span>
                   )}
-                  <span className="font-mono">
-                    Allocated: ₹{currentMilestonesSum.toLocaleString('en-IN')} / ₹{effectiveTotalAmount.toLocaleString('en-IN')}
-                    {isMilestonesBalanced ? (
-                      <span className="text-emerald-400 ml-1.5 font-sans font-medium text-[11px]">
-                        (Balanced 100% across {milestoneCount} {milestoneCount === 1 ? 'part' : 'milestones'})
-                      </span>
-                    ) : (
-                      <span className="text-amber-300 ml-1.5 font-sans font-medium text-[11px]">
-                        (Discrepancy: {milestoneDiscrepancy > 0 ? `₹${milestoneDiscrepancy.toLocaleString('en-IN')} unallocated` : `₹${Math.abs(milestoneDiscrepancy).toLocaleString('en-IN')} over-allocated`})
-                      </span>
-                    )}
-                  </span>
                 </div>
 
                 {!isMilestonesBalanced && (
                   <button
                     type="button"
                     onClick={handleAutoBalance}
-                    className="py-1 px-3 rounded-lg bg-amber-400 hover:bg-amber-300 text-stone-950 text-xs font-bold uppercase tracking-wider transition-colors shrink-0"
+                    className="px-3 py-1 rounded bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 text-[11px] font-semibold transition-colors cursor-pointer"
                   >
-                    Auto-Balance Milestones
+                    Auto-Balance Final Part
                   </button>
                 )}
               </div>
-
             </div>
 
-            {/* Advance Token Notice Strip */}
-            <div className="p-4 rounded-xl bg-amber-950/40 border border-amber-500/50 flex items-center justify-between">
-              <div>
-                <span className="text-[11px] text-amber-300 font-semibold block uppercase tracking-wider">
-                  Milestone 1 Token Required to Lock Date
-                </span>
-                <span className="text-xs text-stone-300">
-                  Full Fee: ₹{effectiveTotalAmount.toLocaleString('en-IN')} (Remaining balance ₹{Math.max(0, effectiveTotalAmount - m1Amount).toLocaleString('en-IN')} scheduled across milestones)
-                </span>
-              </div>
-              <span className="font-mono text-2xl font-bold text-amber-300">
-                ₹{m1Amount.toLocaleString('en-IN')}
-              </span>
-            </div>
-
+            {/* Submit Button */}
             <button
               type="submit"
-              className="w-full py-3.5 px-4 text-xs font-semibold uppercase tracking-wider bg-gradient-to-r from-amber-300 to-amber-400 hover:from-amber-400 hover:to-amber-500 text-stone-950 rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2"
+              className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-600 text-stone-950 font-bold uppercase tracking-wider text-xs shadow-lg transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Proceed to Advance Payment (Milestone 1: ₹{m1Amount.toLocaleString('en-IN')})</span>
+              <span>Proceed to Advance Token Payment (₹{m1Amount.toLocaleString('en-IN')})</span>
               <ArrowRight className="w-4 h-4" />
             </button>
+
           </form>
         )}
 
         {/* ========================================================================= */}
-        {/* STEP 2: Real Payment Gateway Simulation for Part 1 Advance Token */}
+        {/* STEP 2: Advance Token Payment Gateway Simulator */}
         {/* ========================================================================= */}
         {step === 2 && (
           <div className="p-6 space-y-6 max-h-[78vh] overflow-y-auto">
             
-            {/* Booking & Milestone Summary Box */}
-            <div className="p-4 rounded-xl bg-stone-900 border border-stone-800 space-y-2.5 text-xs">
-              <div className="flex justify-between text-stone-400">
-                <span>Reserved Service / Package:</span>
-                <span className="text-white font-semibold">{effectiveServiceName}</span>
+            {/* Summary Box */}
+            <div className="p-4 rounded-xl bg-stone-900 border border-stone-800 space-y-2">
+              <div className="flex items-center justify-between text-xs text-stone-400">
+                <span>Client / Bride:</span>
+                <span className="font-semibold text-white">{clientName} ({clientPhone})</span>
               </div>
-              <div className="flex justify-between text-stone-400">
-                <span>Master Stylist:</span>
-                <span className="text-white font-medium">{currentArtist.name}</span>
+              <div className="flex items-center justify-between text-xs text-stone-400">
+                <span>Selected Service:</span>
+                <span className="font-semibold text-amber-300">{effectiveServiceName}</span>
               </div>
-              <div className="flex justify-between text-stone-400">
+              <div className="flex items-center justify-between text-xs text-stone-400">
                 <span>Event Date & Slot:</span>
-                <span className="text-white font-mono">{bookingDate} at {bookingTime}</span>
+                <span className="font-semibold text-white">{bookingDate} ({bookingTime})</span>
               </div>
-              <div className="flex justify-between text-stone-400">
-                <span>Total Package Price:</span>
-                <span className="text-white font-mono font-bold">₹{effectiveTotalAmount.toLocaleString('en-IN')}</span>
-              </div>
-
-              {/* Milestone breakdown preview */}
-              <div className="pt-2 border-t border-stone-800 space-y-1.5 text-[11px]">
-                <div className="flex justify-between text-emerald-400 font-semibold">
-                  <span>• Milestone 1 (Paying Now via Gateway):</span>
-                  <span className="font-mono">₹{m1Amount.toLocaleString('en-IN')} (Due {m1Date})</span>
-                </div>
-                {milestoneCount >= 2 && m2Amount > 0 && (
-                  <div className="flex justify-between text-amber-300">
-                    <span>• Milestone 2 (Scheduled):</span>
-                    <span className="font-mono">₹{m2Amount.toLocaleString('en-IN')} (Due {m2Date})</span>
-                  </div>
-                )}
-                {milestoneCount === 3 && m3Amount > 0 && (
-                  <div className="flex justify-between text-sky-400">
-                    <span>• Milestone 3 (Scheduled):</span>
-                    <span className="font-mono">₹{m3Amount.toLocaleString('en-IN')} (Due {m3Date})</span>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex justify-between text-stone-400 pt-2 border-t border-stone-800 font-semibold">
-                <span className="text-amber-300">Milestone 1 Token Payable Right Now:</span>
-                <span className="font-mono text-lg text-amber-300">₹{m1Amount.toLocaleString('en-IN')}</span>
+              <div className="pt-2 border-t border-stone-800 flex items-center justify-between text-sm">
+                <span className="font-bold text-stone-200">Milestone 1 Advance Due Now:</span>
+                <span className="font-mono font-bold text-amber-300 text-base">₹{m1Amount.toLocaleString('en-IN')}</span>
               </div>
             </div>
 
-            {/* Payment Method Selector */}
+            {/* Payment Method Tabs */}
             <div className="space-y-3">
               <label className="text-xs font-semibold text-stone-300 uppercase tracking-wider block">
-                Choose Instant Payment Method
+                Select Secure Payment Method
               </label>
-
-              <div className="grid grid-cols-3 gap-2">
+              
+              <div className="grid grid-cols-3 gap-2.5">
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('upi')}
-                  className={`p-3 rounded-xl border text-center transition-colors ${
+                  className={`p-3 rounded-xl border text-center text-xs font-medium transition-all cursor-pointer ${
                     paymentMethod === 'upi'
-                      ? 'border-amber-400 bg-amber-950/40 text-amber-200 font-semibold'
-                      : 'border-stone-800 bg-stone-900 text-stone-400'
+                      ? 'border-amber-400 bg-amber-950/40 text-amber-200 shadow-md'
+                      : 'border-stone-800 bg-stone-900 text-stone-400 hover:border-stone-700'
                   }`}
                 >
-                  <Smartphone className="w-5 h-5 mx-auto mb-1 text-amber-400" />
-                  <span className="text-xs block">UPI / QR Code</span>
-                  <span className="text-[10px] text-stone-500">GPay, PhonePe</span>
+                  <QrCode className="w-5 h-5 mx-auto mb-1 text-amber-400" />
+                  <span>UPI / QR</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('card')}
-                  className={`p-3 rounded-xl border text-center transition-colors ${
+                  className={`p-3 rounded-xl border text-center text-xs font-medium transition-all cursor-pointer ${
                     paymentMethod === 'card'
-                      ? 'border-amber-400 bg-amber-950/40 text-amber-200 font-semibold'
-                      : 'border-stone-800 bg-stone-900 text-stone-400'
+                      ? 'border-amber-400 bg-amber-950/40 text-amber-200 shadow-md'
+                      : 'border-stone-800 bg-stone-900 text-stone-400 hover:border-stone-700'
                   }`}
                 >
                   <CreditCard className="w-5 h-5 mx-auto mb-1 text-amber-400" />
-                  <span className="text-xs block">Cards</span>
-                  <span className="text-[10px] text-stone-500">Credit / Debit</span>
+                  <span>Credit / Debit Card</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('netbanking')}
-                  className={`p-3 rounded-xl border text-center transition-colors ${
+                  className={`p-3 rounded-xl border text-center text-xs font-medium transition-all cursor-pointer ${
                     paymentMethod === 'netbanking'
-                      ? 'border-amber-400 bg-amber-950/40 text-amber-200 font-semibold'
-                      : 'border-stone-800 bg-stone-900 text-stone-400'
+                      ? 'border-amber-400 bg-amber-950/40 text-amber-200 shadow-md'
+                      : 'border-stone-800 bg-stone-900 text-stone-400 hover:border-stone-700'
                   }`}
                 >
-                  <ShieldCheck className="w-5 h-5 mx-auto mb-1 text-amber-400" />
-                  <span className="text-xs block">NetBanking</span>
-                  <span className="text-[10px] text-stone-500">HDFC, ICICI, SBI</span>
+                  <Smartphone className="w-5 h-5 mx-auto mb-1 text-amber-400" />
+                  <span>Net Banking / Wallet</span>
                 </button>
               </div>
             </div>
 
-            {/* UPI Option */}
-            {paymentMethod === 'upi' && (
-              <div className="p-4 rounded-xl bg-stone-900 border border-stone-800 space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-24 h-24 bg-white p-2 rounded-lg flex items-center justify-center shrink-0">
-                    <QrCode className="w-20 h-20 text-stone-950" />
+            {/* Dynamic Payment Form Body */}
+            <div className="p-4 rounded-xl bg-stone-900 border border-stone-800 space-y-4">
+              {paymentMethod === 'upi' && (
+                <div className="text-center space-y-3 py-2">
+                  <div className="w-36 h-36 mx-auto bg-white p-2 rounded-xl shadow flex items-center justify-center">
+                    <QrCode className="w-32 h-32 text-stone-950" />
                   </div>
-                  <div className="space-y-1 text-xs text-stone-300">
-                    <span className="text-[11px] font-bold text-amber-300 uppercase tracking-wider block">
-                      Scan QR with Any UPI App
-                    </span>
-                    <p className="text-stone-400">
-                      Scan via Google Pay, PhonePe, Paytm, or BHIM.
-                    </p>
-                    <p className="font-mono text-[11px] text-stone-200 bg-stone-950 px-2 py-1 rounded inline-block">
-                      UPI ID: deepikasharma.bbk@icici
-                    </p>
-                  </div>
-                </div>
-
-                <div className="pt-2 border-t border-stone-800 flex items-center gap-2">
+                  <p className="text-xs text-stone-300">
+                    Scan via Google Pay, PhonePe, Paytm, or BHIM UPI to lock date.
+                  </p>
                   <input
                     type="text"
-                    placeholder="Or enter your VPA / UPI ID (e.g. mobile@upi)"
+                    placeholder="Enter UPI Transaction Ref / VPA (e.g. 9580494058@paytm)"
                     value={upiId}
                     onChange={(e) => setUpiId(e.target.value)}
-                    className="flex-1 p-2 rounded bg-stone-950 border border-stone-700 text-stone-200 text-xs focus:outline-none focus:border-amber-400"
+                    className="w-full p-2.5 rounded-lg bg-stone-950 border border-stone-700 text-stone-200 text-xs text-center focus:outline-none focus:border-amber-400"
                   />
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Card Option */}
-            {paymentMethod === 'card' && (
-              <div className="p-4 rounded-xl bg-stone-900 border border-stone-800 space-y-3">
-                <div className="space-y-1">
-                  <label className="text-[11px] text-stone-400">Card Number</label>
-                  <input
-                    type="text"
-                    value={cardNumber}
-                    onChange={(e) => setCardNumber(e.target.value)}
-                    className="w-full p-2 rounded bg-stone-950 border border-stone-700 text-stone-200 font-mono text-xs focus:outline-none focus:border-amber-400"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <label className="text-[11px] text-stone-400">Expiry (MM/YY)</label>
+              {paymentMethod === 'card' && (
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-[11px] text-stone-400 block mb-1">Card Number</label>
                     <input
                       type="text"
-                      value={cardExpiry}
-                      onChange={(e) => setCardExpiry(e.target.value)}
-                      className="w-full p-2 rounded bg-stone-950 border border-stone-700 text-stone-200 font-mono text-xs focus:outline-none focus:border-amber-400"
+                      value={cardNumber}
+                      onChange={(e) => setCardNumber(e.target.value)}
+                      className="w-full p-2.5 rounded-lg bg-stone-950 border border-stone-700 text-stone-200 text-xs font-mono"
                     />
                   </div>
-                  <div className="space-y-1">
-                    <label className="text-[11px] text-stone-400">CVV</label>
-                    <input
-                      type="password"
-                      maxLength={3}
-                      value={cardCvv}
-                      onChange={(e) => setCardCvv(e.target.value)}
-                      className="w-full p-2 rounded bg-stone-950 border border-stone-700 text-stone-200 font-mono text-xs focus:outline-none focus:border-amber-400"
-                    />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-[11px] text-stone-400 block mb-1">Expiry Date</label>
+                      <input
+                        type="text"
+                        value={cardExpiry}
+                        onChange={(e) => setCardExpiry(e.target.value)}
+                        className="w-full p-2.5 rounded-lg bg-stone-950 border border-stone-700 text-stone-200 text-xs font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] text-stone-400 block mb-1">CVV Security</label>
+                      <input
+                        type="password"
+                        maxLength={4}
+                        value={cardCvv}
+                        onChange={(e) => setCardCvv(e.target.value)}
+                        className="w-full p-2.5 rounded-lg bg-stone-950 border border-stone-700 text-stone-200 text-xs font-mono"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* NetBanking Option */}
-            {paymentMethod === 'netbanking' && (
-              <div className="p-4 rounded-xl bg-stone-900 border border-stone-800 space-y-2">
-                <label className="text-xs text-stone-400">Select NetBanking Institution</label>
-                <select className="w-full p-2 rounded bg-stone-950 border border-stone-700 text-stone-200 text-xs focus:outline-none focus:border-amber-400">
-                  <option>HDFC Bank Corporate & Retail</option>
-                  <option>ICICI Bank Infinity</option>
-                  <option>State Bank of India (SBI)</option>
-                  <option>Axis Bank</option>
-                  <option>Kotak Mahindra Bank</option>
-                </select>
-              </div>
-            )}
+              {paymentMethod === 'netbanking' && (
+                <div className="space-y-2">
+                  <label className="text-[11px] text-stone-400 block">Select Preferred Bank</label>
+                  <select className="w-full p-2.5 rounded-lg bg-stone-950 border border-stone-700 text-stone-200 text-xs cursor-pointer">
+                    <option>State Bank of India (SBI)</option>
+                    <option>HDFC Bank</option>
+                    <option>ICICI Bank</option>
+                    <option>Axis Bank</option>
+                    <option>Punjab National Bank (PNB)</option>
+                  </select>
+                </div>
+              )}
+            </div>
 
-            <div className="flex items-center gap-3">
+            {/* Security Badge */}
+            <div className="flex items-center gap-2 text-xs text-stone-400 bg-stone-900/50 p-3 rounded-lg">
+              <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+              <span>256-bit SSL Encrypted Studio Checkout. Advance payment is non-refundable and instantly locks the event date in Barabanki archive.</span>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-3 pt-2">
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="py-3 px-4 rounded-xl bg-stone-900 hover:bg-stone-800 border border-stone-700 text-stone-300 text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-colors"
+                className="px-4 py-3 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-300 text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Back</span>
@@ -1296,18 +1013,18 @@ export const BookingModal: React.FC = () => {
                 type="button"
                 disabled={isProcessingPayment}
                 onClick={handleSimulatePayment}
-                className="flex-1 py-3.5 px-4 text-xs font-semibold uppercase tracking-wider bg-gradient-to-r from-amber-300 to-amber-400 hover:from-amber-400 hover:to-amber-500 text-stone-950 rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
+                className="flex-1 py-3.5 px-6 rounded-xl bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-600 text-stone-950 font-bold uppercase tracking-wider text-xs shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
                 {isProcessingPayment ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-stone-950 border-t-transparent rounded-full animate-spin" />
-                    <span>Authorizing Part 1 Token Payment...</span>
-                  </div>
+                  <span className="flex items-center gap-2">
+                    <span className="w-4 h-4 border-2 border-stone-950 border-t-transparent rounded-full animate-spin" />
+                    <span>Verifying Secure Transaction...</span>
+                  </span>
                 ) : (
-                  <>
-                    <ShieldCheck className="w-4 h-4" />
-                    <span>Pay Milestone 1 (₹{m1Amount.toLocaleString('en-IN')}) & Lock Date</span>
-                  </>
+                  <span className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>Pay ₹{m1Amount.toLocaleString('en-IN')} & Confirm Booking</span>
+                  </span>
                 )}
               </button>
             </div>
@@ -1316,177 +1033,128 @@ export const BookingModal: React.FC = () => {
         )}
 
         {/* ========================================================================= */}
-        {/* STEP 3: Verified Digital Booking Voucher & Milestone Installment Receipt */}
+        {/* STEP 3: Confirmed Voucher & Printable Installment Receipt */}
         {/* ========================================================================= */}
         {step === 3 && (
-          <div className="p-6 sm:p-8 space-y-6 max-h-[82vh] overflow-y-auto">
+          <div className="p-6 space-y-6 max-h-[78vh] overflow-y-auto">
             
-            {/* Success Check Banner */}
-            <div className="text-center space-y-2">
-              <div className="w-14 h-14 rounded-full bg-emerald-500/20 border border-emerald-500 text-emerald-400 flex items-center justify-center mx-auto">
-                <CheckCircle2 className="w-8 h-8" />
+            {/* Success Banner */}
+            <div className="p-4 rounded-2xl bg-emerald-950/30 border border-emerald-500/50 text-center space-y-2">
+              <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-300 flex items-center justify-center mx-auto border border-emerald-500/40">
+                <CheckCircle2 className="w-6 h-6" />
               </div>
-              <h3 className="font-serif-luxury text-2xl font-bold text-white">
-                Wedding Date Confirmed!
+              <h3 className="font-serif-luxury text-xl font-bold text-white">
+                Booking Locked Successfully!
               </h3>
               <p className="text-xs text-stone-300">
-                Your advance payment of ₹{m1Amount.toLocaleString('en-IN')} has been acknowledged by Deepika Sharma Studio (Behind Akash Palace, Lakhpedabagh, Barabanki).
+                Your event date is securely reserved in Barabanki. Booking ID: <strong className="text-amber-300 font-mono">{confirmedBookingId}</strong>
               </p>
             </div>
 
-            {/* Printable Digital Receipt Card */}
-            <div id="booking-receipt" className="p-5 rounded-2xl bg-stone-900 border border-stone-800 space-y-4 text-xs">
+            {/* Printable Voucher Card */}
+            <div id="printable-voucher" className="p-5 rounded-2xl bg-stone-900 border border-stone-800 space-y-4 text-xs">
               
-              {/* Studio Master Header */}
+              {/* Voucher Top Brand */}
               <div className="flex items-center justify-between pb-3 border-b border-stone-800">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-full overflow-hidden border border-amber-400 bg-stone-950 shrink-0">
-                    <img src={STUDIO_LOGO} alt="Deepika Sharma Logo" className="w-full h-full object-cover" />
-                  </div>
-                  <div>
-                    <span className="font-serif-luxury text-base font-bold text-amber-200 block">
-                      {STUDIO_INFO.name}
-                    </span>
-                    <span className="text-[10px] text-stone-400">{STUDIO_INFO.address}</span>
-                  </div>
+                <div>
+                  <h4 className="font-serif-luxury text-base font-bold text-white">{STUDIO_INFO.name}</h4>
+                  <p className="text-[10px] text-stone-400">Official Bridal Makeover & Installment Voucher</p>
                 </div>
-                <div className="text-right">
-                  <span className="text-[10px] text-stone-400 uppercase tracking-widest block font-medium">Booking ID</span>
-                  <span className="font-mono text-sm font-bold text-amber-300">{confirmedBookingId}</span>
+                <div className="text-right font-mono text-[11px] text-amber-300">
+                  Ref: {transactionRef}
                 </div>
               </div>
 
-              {/* Client & Service Grid */}
+              {/* Client & Booking Grid */}
               <div className="grid grid-cols-2 gap-3 text-stone-300">
                 <div>
-                  <span className="text-[10px] text-stone-500 uppercase block">Bride Name</span>
-                  <span className="font-medium text-white">{clientName}</span>
+                  <span className="text-stone-500 block text-[10px] uppercase">Client Name</span>
+                  <strong className="text-white">{clientName}</strong>
                 </div>
                 <div>
-                  <span className="text-[10px] text-stone-500 uppercase block">Contact Phone</span>
-                  <span className="font-mono">{clientPhone}</span>
+                  <span className="text-stone-500 block text-[10px] uppercase">Contact Phone</span>
+                  <strong className="text-white">{clientPhone}</strong>
                 </div>
                 <div>
-                  <span className="text-[10px] text-stone-500 uppercase block">Reserved Look / Service</span>
-                  <span className="font-medium text-white">{effectiveServiceName}</span>
+                  <span className="text-stone-500 block text-[10px] uppercase">Service Package</span>
+                  <strong className="text-amber-200">{effectiveServiceName}</strong>
                 </div>
                 <div>
-                  <span className="text-[10px] text-stone-500 uppercase block">Master Stylist</span>
-                  <span className="text-white">{currentArtist.name}</span>
+                  <span className="text-stone-500 block text-[10px] uppercase">Assigned Artist</span>
+                  <strong className="text-white">{currentArtist.name}</strong>
                 </div>
                 <div>
-                  <span className="text-[10px] text-stone-500 uppercase block">Event Date</span>
-                  <span className="font-mono text-white">{bookingDate}</span>
+                  <span className="text-stone-500 block text-[10px] uppercase">Event Date & Time</span>
+                  <strong className="text-white">{bookingDate} ({bookingTime})</strong>
                 </div>
                 <div>
-                  <span className="text-[10px] text-stone-500 uppercase block">Slot Timing</span>
-                  <span className="font-mono text-white">{bookingTime}</span>
+                  <span className="text-stone-500 block text-[10px] uppercase">Makeover Destination</span>
+                  <strong className="text-white">{locationType === 'studio' ? 'Studio (Lakhpedabagh)' : venueAddress || 'On-Site Venue'}</strong>
                 </div>
               </div>
 
-              {/* MILESTONE PAYMENT SCHEDULE TABLE */}
+              {/* Installment Schedule Breakdown Table */}
               <div className="pt-3 border-t border-stone-800 space-y-2">
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
-                    <Receipt className="w-3.5 h-3.5" />
-                    <span>Milestone Payment Installment Schedule</span>
-                  </span>
-                  <span className="font-mono text-stone-400">{savedPartPayments.length} Milestone Plan</span>
-                </div>
-
-                <div className="overflow-x-auto rounded-lg border border-stone-800">
-                  <table className="w-full text-left text-[11px]">
-                    <thead className="bg-stone-950 text-stone-400 border-b border-stone-800">
-                      <tr>
-                        <th className="p-2">Milestone</th>
-                        <th className="p-2">Installment Description</th>
-                        <th className="p-2">Scheduled Due Date</th>
-                        <th className="p-2 text-right">Amount</th>
-                        <th className="p-2 text-center">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-stone-800/60 font-sans">
-                      {savedPartPayments.map((part) => (
-                        <tr key={part.id} className="hover:bg-stone-800/40">
-                          <td className="p-2 font-mono font-bold text-amber-300">
-                            Milestone {part.partNumber}
-                          </td>
-                          <td className="p-2 font-medium text-stone-200">
-                            {part.title}
-                          </td>
-                          <td className="p-2 font-mono text-stone-400">
-                            {part.date}
-                          </td>
-                          <td className="p-2 text-right font-mono font-bold text-white tabular-nums">
-                            ₹{part.amount.toLocaleString('en-IN')}
-                          </td>
-                          <td className="p-2 text-center">
-                            <span className={`text-[9px] uppercase tracking-wider px-2 py-0.5 rounded font-bold ${
-                              part.status === 'paid'
-                                ? 'bg-emerald-950 text-emerald-300 border border-emerald-800/80'
-                                : 'bg-amber-950 text-amber-300 border border-amber-800/80'
-                            }`}>
-                              {part.status === 'paid' ? 'Paid ✓' : 'Due ⏳'}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <span className="font-semibold text-stone-200 uppercase tracking-wider text-[11px] block">
+                  Milestone Installment Schedule:
+                </span>
+                <div className="space-y-1.5">
+                  {savedPartPayments.map((p) => (
+                    <div key={p.id} className="flex items-center justify-between p-2 rounded bg-stone-950 border border-stone-800 text-[11px]">
+                      <div>
+                        <strong className="text-stone-200 block">{p.title}</strong>
+                        <span className="text-stone-400 font-mono">Due: {p.date} · {p.receivedBy}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-mono font-bold text-amber-300 block">₹{p.amount.toLocaleString('en-IN')}</span>
+                        <span className={`text-[9px] uppercase px-1.5 py-0.5 rounded ${p.status === 'paid' ? 'bg-emerald-950 text-emerald-300' : 'bg-stone-900 text-stone-400'}`}>
+                          {p.status}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              {/* Price Calculations */}
-              <div className="pt-2 border-t border-stone-800 space-y-1.5 font-mono">
-                <div className="flex justify-between text-stone-400">
-                  <span>Total Booking Package Fee:</span>
-                  <span>₹{effectiveTotalAmount.toLocaleString('en-IN')}</span>
+              {/* Financial Summary Strip */}
+              <div className="pt-3 border-t border-stone-800 flex items-center justify-between text-xs">
+                <div>
+                  <span className="text-stone-400 block">Total Package Amount</span>
+                  <span className="font-mono font-bold text-white">₹{effectiveTotalAmount.toLocaleString('en-IN')}</span>
                 </div>
-                <div className="flex justify-between text-emerald-400 font-semibold">
-                  <span>Milestone 1 Advance Token Received:</span>
-                  <span>- ₹{m1Amount.toLocaleString('en-IN')}</span>
+                <div>
+                  <span className="text-stone-400 block">Advance Token Paid</span>
+                  <span className="font-mono font-bold text-emerald-400">₹{m1Amount.toLocaleString('en-IN')}</span>
                 </div>
-                <div className="flex justify-between text-amber-300 font-bold text-sm pt-1 border-t border-stone-800">
-                  <span>Total Balance Pending (Scheduled Milestones):</span>
-                  <span>₹{Math.max(0, effectiveTotalAmount - m1Amount).toLocaleString('en-IN')}</span>
+                <div className="text-right">
+                  <span className="text-stone-400 block">Balance Due</span>
+                  <span className="font-mono font-bold text-amber-300">₹{Math.max(0, effectiveTotalAmount - m1Amount).toLocaleString('en-IN')}</span>
                 </div>
               </div>
 
-              <div className="pt-2 text-[10px] text-stone-500 flex items-center justify-between">
-                <span>Milestone 1 Gateway Ref: {transactionRef}</span>
-                <span className="text-emerald-400">● Digitally Signed & Locked</span>
-              </div>
             </div>
 
             {/* Actions */}
-            <div className="flex flex-col sm:flex-row items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3 pt-2">
               <button
                 type="button"
                 onClick={handlePrintReceipt}
-                className="w-full sm:flex-1 py-3 px-4 rounded-xl bg-stone-900 hover:bg-stone-800 border border-stone-700 text-stone-200 text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                className="px-4 py-2.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer"
               >
                 <Printer className="w-4 h-4 text-amber-400" />
-                <span>Print / Save Voucher</span>
+                <span>Print Official Voucher</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => {
                   closeBookingModal();
-                  openClientPortal(clientPhone);
+                  openClientPortal();
                 }}
-                className="w-full sm:flex-1 py-3 px-4 rounded-xl bg-amber-950/80 hover:bg-amber-900 border border-amber-500/50 text-amber-300 text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                className="flex-1 py-3 px-5 rounded-xl bg-gradient-to-r from-amber-300 to-amber-400 hover:from-amber-400 hover:to-amber-500 text-stone-950 font-bold uppercase tracking-wider text-xs shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                <Receipt className="w-4 h-4 text-amber-400" />
-                <span>View in Client Portal</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={closeBookingModal}
-                className="w-full sm:w-auto py-3 px-6 rounded-xl bg-amber-400 hover:bg-amber-300 text-stone-950 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
-              >
-                Done
+                <span>Open Client Portal & View Status</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
 
