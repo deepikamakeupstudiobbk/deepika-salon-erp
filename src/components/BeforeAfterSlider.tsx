@@ -1,6 +1,11 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import React, { useState, useRef, useCallback } from 'react';
 import { useStudio } from '../context/StudioContext';
-import { Sparkles, SlidersHorizontal, CheckCircle2, Eye, ShieldCheck } from 'lucide-react';
+import { Sparkles, SlidersHorizontal, CheckCircle2 } from 'lucide-react';
 import {
   MAKEOVER_BEFORE,
   MAKEOVER_AFTER,
@@ -26,7 +31,7 @@ const LOOK_PRESETS: LookPreset[] = [
     category: 'Bridal Ceremony',
     beforeImg: MAKEOVER_BEFORE,
     afterImg: MAKEOVER_AFTER,
-    artist: 'Ananya Sharma (Lead Artist)',
+    artist: 'Deepika Sharma (Lead Artist)',
     highlights: [
       'Temptu 4K Micro-Airbrush Base',
       'Elongated Kohl Winged Smokey Eyes',
@@ -41,7 +46,7 @@ const LOOK_PRESETS: LookPreset[] = [
     category: 'Reception & Sangeet',
     beforeImg: MAKEOVER_BEFORE,
     afterImg: RECEPTION_GLAM,
-    artist: 'Pooja Verma (Senior Specialist)',
+    artist: 'Senior Makeup Specialist',
     highlights: [
       'Glass Skin 3D Priming',
       'Rose-Gold Shimmer Foil Lids',
@@ -56,7 +61,7 @@ const LOOK_PRESETS: LookPreset[] = [
     category: 'Daytime Pre-Wedding',
     beforeImg: MAKEOVER_BEFORE,
     afterImg: HALDI_MEHENDI,
-    artist: 'Neha Sen & Pooja Verma',
+    artist: 'Deepika Sharma Academy Team',
     highlights: [
       'Waterproof Dewy Glass Tint',
       'Fresh Botanical Jasmine Adornment',
@@ -83,7 +88,7 @@ export const BeforeAfterSlider: React.FC = () => {
   }, []);
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (isDragging && e.touches[0]) {
+    if (e.touches[0]) {
       handleMove(e.touches[0].clientX);
     }
   };
@@ -99,7 +104,7 @@ export const BeforeAfterSlider: React.FC = () => {
   };
 
   return (
-    <section id="transformations" className="py-20 bg-stone-900 text-stone-100 border-b border-stone-800">
+    <section id="transformations" className="py-16 sm:py-20 bg-stone-900 text-stone-100 border-b border-stone-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
@@ -127,7 +132,7 @@ export const BeforeAfterSlider: React.FC = () => {
                     setActivePreset(preset);
                     setSliderPos(50);
                   }}
-                  className={`px-4 py-2 text-xs font-medium rounded-lg transition-all duration-200 whitespace-nowrap shrink-0 ${
+                  className={`px-4 py-2 text-xs font-medium rounded-lg transition-all duration-200 whitespace-nowrap shrink-0 cursor-pointer ${
                     isActive
                       ? 'bg-amber-300 text-stone-950 font-semibold shadow-md'
                       : 'bg-stone-800/80 text-stone-300 hover:text-white hover:bg-stone-700/80 border border-stone-700/50'
@@ -155,7 +160,7 @@ export const BeforeAfterSlider: React.FC = () => {
               onTouchStart={() => setIsDragging(true)}
               onTouchEnd={() => setIsDragging(false)}
               onTouchMove={handleTouchMove}
-              className="relative w-full h-[400px] sm:h-[500px] md:h-[560px] rounded-2xl overflow-hidden select-none cursor-ew-resize shadow-2xl border border-stone-700 bg-stone-950 group"
+              className="relative w-full h-[380px] sm:h-[480px] md:h-[540px] rounded-2xl overflow-hidden select-none cursor-ew-resize shadow-2xl border border-stone-700 bg-stone-950 group"
             >
               {/* After Image (Full background) */}
               <img
@@ -192,7 +197,7 @@ export const BeforeAfterSlider: React.FC = () => {
                 </div>
               </div>
 
-              {/* Quiet Text Overlay Labels (Zero-Pill discipline) */}
+              {/* Quiet Text Overlay Labels */}
               <div className="absolute top-4 left-4 bg-stone-950/75 backdrop-blur-sm border border-stone-800 text-stone-200 px-3 py-1 rounded text-xs uppercase tracking-widest pointer-events-none">
                 Bare Skin (Before)
               </div>
@@ -248,7 +253,7 @@ export const BeforeAfterSlider: React.FC = () => {
 
               <button
                 onClick={() => openBookingModal(activePreset.serviceId)}
-                className="w-full py-3 px-4 text-xs font-semibold uppercase tracking-wider bg-gradient-to-r from-amber-300 to-amber-400 hover:from-amber-400 hover:to-amber-500 text-stone-950 rounded-lg shadow transition-all duration-200 flex items-center justify-center gap-2"
+                className="w-full py-3 px-4 text-xs font-semibold uppercase tracking-wider bg-gradient-to-r from-amber-300 to-amber-400 hover:from-amber-400 hover:to-amber-500 text-stone-950 rounded-lg shadow transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Sparkles className="w-4 h-4" />
                 <span>Book This Exact Look</span>
