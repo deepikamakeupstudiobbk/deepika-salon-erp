@@ -1,4 +1,6 @@
 /**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
  * Deepika Sharma Makeup Studio & Academy - Core Type Definitions
  */
 
@@ -56,7 +58,7 @@ export interface Booking {
   transactionId: string;
   notes?: string;
   createdAt: string;
-  partPayments?: PartPayment[]; // Part-wise payment schedule with date and service
+  partPayments?: PartPayment[];
 }
 
 export type LeadStatus = 'new' | 'contacted' | 'trial_booked' | 'converted' | 'lost';
@@ -93,7 +95,7 @@ export interface Employee {
   avatar: string;
   specialty: string;
   monthlySalary: number;
-  commissionRate: number; // in percentage e.g. 10%
+  commissionRate: number; // percentage e.g. 10%
   assignedBookingsCount: number;
   socialHandle: string;
   instagramUrl: string;
