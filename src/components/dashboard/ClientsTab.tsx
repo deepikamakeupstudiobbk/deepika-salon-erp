@@ -6,7 +6,7 @@ export const ClientsTab: React.FC = () => {
   const { clients, addClientPhoto, showToast } = useStudio();
   const [selectedClientId, setSelectedClientId] = useState<string>(clients[0]?.id || '');
   
-  // File upload state
+  // File upload state for local device / Google Drive file selection
   const [photoUrl, setPhotoUrl] = useState('');
   const [photoTitle, setPhotoTitle] = useState('');
 
@@ -93,14 +93,14 @@ export const ClientsTab: React.FC = () => {
                 </div>
               </div>
 
-              {/* OWNER QUICK UPLOAD SECTION WITH FILE PICKER */}
+              {/* OWNER QUICK UPLOAD SECTION WITH PROPER FILE PICKER */}
               <div className="p-4 rounded-xl bg-stone-950 border border-amber-500/40 space-y-3">
                 <h4 className="font-serif-luxury text-sm font-bold text-amber-300 flex items-center gap-2">
                   <Camera className="w-4 h-4 text-amber-400" />
                   <span>Owner Quick Upload: Add New Makeover Photo</span>
                 </h4>
                 <p className="text-[11px] text-stone-400">
-                  Select image files directly from your device or Google Drive sync folder.
+                  Choose image files directly from your device or Google Drive sync folder.
                 </p>
 
                 <div className="space-y-2.5 pt-1">
@@ -172,7 +172,7 @@ export const ClientsTab: React.FC = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {activeClient.photos.map((photo) => (
                       <div key={photo.id} className="rounded-xl overflow-hidden bg-stone-950 border border-stone-800">
-                        <img src={photo.url} alt={photo.title} className="w-full h-40 object-cover object-top" />
+                        <img src={photo.url} alt={photo.title} className="w-40 object-cover object-top" />
                         <div className="p-2.5 text-xs">
                           <strong className="text-white block">{photo.title}</strong>
                           <span className="text-[10px] text-stone-400 font-mono">{photo.date}</span>
