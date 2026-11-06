@@ -1,23 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useStudio } from '../../context/StudioContext';
-import { Camera, Sparkles, User, Phone, Mail, ShieldCheck } from 'lucide-react';
+import { Camera, Link as LinkIcon, Sparkles } from 'lucide-react';
 
 export const ClientsTab: React.FC = () => {
   const { clients, addClientPhoto, showToast } = useStudio();
   const [selectedClientId, setSelectedClientId] = useState<string>(clients[0]?.id || '');
   
-  // File upload state for local device / Google Drive file selection
-  const [photoUrl, setPhotoUrl] = useState('');
+  // Input states for Google Drive Link or Device File
+  const [inputUrl, setInputUrl] = useState('');
   const [photoTitle, setPhotoTitle] = useState('');
 
   const activeClient = clients.find(c => c.id === selectedClientId) || clients[0];
+
+  // Handle saving Google Drive image link or Direct URL
+  const handleSaveFromDrive = () => {
+    if (!inputUrl.trim()) {
+      showToast('Kripya Google Drive image ka direct link ya URL dalein!');
+      return;
+    }
+
+    addClientPhoto(activeClient.id, {
+      url: inputUrl.trim(),
+      title: photoTitle || 'Google Drive Bridal Look',
+      date: new Date().toISOString().split('T')[0],
+      category: 'Google Drive Vault',
+      verifiedConsent: true
+    });
+
+    setInputUrl('');
+    setPhotoTitle('');
+    showToast('Google Drive se photo successfully client vault mein add ho gayi!');
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-serif-luxury text-xl font-bold text-white">Client Records & Regulars</h2>
-          <p className="text-xs text-stone-400">Manage VIP bridal profiles, consultation notes, and photo vaults.</p>
+          <h2 className="font-serif-luxury text-xl font-bold text-white">Client Records & Google Drive Vault</h2>
+          <p className="text-xs text-stone-400">Manage VIP bridal profiles and Google Drive synced makeover photos.</p>
         </div>
       </div>
 
@@ -57,7 +77,7 @@ export const ClientsTab: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column: Active Client Details & Photo Vault with File Picker */}
+        {/* Right Column: Active Client Details & Google Drive Link Vault */}
         <div className="lg:col-span-2 space-y-5 bg-stone-900 p-6 rounded-2xl border border-stone-800">
           {activeClient ? (
             <>
@@ -93,33 +113,25 @@ export const ClientsTab: React.FC = () => {
                 </div>
               </div>
 
-              {/* OWNER QUICK UPLOAD SECTION WITH PROPER FILE PICKER */}
+              {/* GOOGLE DRIVE LINK UPLOAD SECTION */}
               <div className="p-4 rounded-xl bg-stone-950 border border-amber-500/40 space-y-3">
                 <h4 className="font-serif-luxury text-sm font-bold text-amber-300 flex items-center gap-2">
-                  <Camera className="w-4 h-4 text-amber-400" />
-                  <span>Owner Quick Upload: Add New Makeover Photo</span>
+                  <LinkIcon className="w-4 h-4 text-amber-400" />
+                  <span>Google Drive Folder Link: Add Client Photo</span>
                 </h4>
                 <p className="text-[11px] text-stone-400">
-                  Choose image files directly from your device or Google Drive sync folder.
+                  Apne Google Drive folder se photo ka direct link/URL yahan paste karein taaki client vault mein sync ho jaye.
                 </p>
 
                 <div className="space-y-2.5 pt-1">
                   <div className="space-y-1">
-                    <label className="block text-[11px] font-medium text-stone-300">Choose Image File</label>
+                    <label className="block text-[11px] font-medium text-stone-300">Google Drive Image URL / Link</label>
                     <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            setPhotoUrl(reader.result as string);
-                          };
-                          reader.readAsDataURL(file);
-                        }
-                      }}
-                      className="w-full text-xs text-stone-300 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-400 file:text-stone-950 hover:file:bg-amber-300 cursor-pointer bg-stone-900 border border-stone-800 rounded-xl p-1"
+                      type="text"
+                      value={inputUrl}
+                      onChange={(e) => setInputUrl(e.target.value)}
+                      placeholder="Paste Google Drive shareable image link here..."
+                      className="w-full bg-stone-900 border border-stone-800 text-stone-100 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-amber-400 font-mono"
                     />
                   </div>
 
@@ -136,25 +148,10 @@ export const ClientsTab: React.FC = () => {
 
                   <button
                     type="button"
-                    onClick={() => {
-                      if (!photoUrl) {
-                        showToast('Please choose an image file first!');
-                        return;
-                      }
-                      addClientPhoto(activeClient.id, {
-                        url: photoUrl,
-                        title: photoTitle || 'Bridal Vault Look',
-                        date: new Date().toISOString().split('T')[0],
-                        category: 'Studio Vault',
-                        verifiedConsent: true
-                      });
-                      setPhotoUrl('');
-                      setPhotoTitle('');
-                      showToast('Makeover photo uploaded successfully to client vault!');
-                    }}
+                    onClick={handleSaveFromDrive}
                     className="w-full py-2.5 bg-amber-400 hover:bg-amber-300 text-stone-950 text-xs font-bold rounded-xl transition-all cursor-pointer shadow-md"
                   >
-                    Save to Client Vault
+                    Sync & Save from Google Drive
                   </button>
                 </div>
               </div>
@@ -172,7 +169,7 @@ export const ClientsTab: React.FC = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {activeClient.photos.map((photo) => (
                       <div key={photo.id} className="rounded-xl overflow-hidden bg-stone-950 border border-stone-800">
-                        <img src={photo.url} alt={photo.title} className="w-40 object-cover object-top" />
+                        <img src={photo.url} alt={photo.title} className="w-full h-40 object-cover object-top" />
                         <div className="p-2.5 text-xs">
                           <strong className="text-white block">{photo.title}</strong>
                           <span className="text-[10px] text-stone-400 font-mono">{photo.date}</span>
