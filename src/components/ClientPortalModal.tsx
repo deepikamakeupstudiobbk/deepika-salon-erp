@@ -39,6 +39,7 @@ export const ClientPortalModal: React.FC = () => {
     bookings,
     clients,
     openBookingModal,
+    addClientPhoto,
     showToast
   } = useStudio();
 
@@ -55,6 +56,10 @@ export const ClientPortalModal: React.FC = () => {
   // Digital Receipt Viewer State
   const [activeReceiptBooking, setActiveReceiptBooking] = useState<Booking | null>(null);
   const [activeReceiptPart, setActiveReceiptPart] = useState<PartPayment | null>(null);
+
+  // Owner Quick Upload state for Client Photos
+  const [newPhotoUrl, setNewPhotoUrl] = useState('');
+  const [newPhotoTitle, setNewPhotoTitle] = useState('');
 
   // Clean phone helper
   const cleanPhone = (p: string) => p.replace(/[^0-9]/g, '').slice(-10);
@@ -946,7 +951,7 @@ export const ClientPortalModal: React.FC = () => {
               </div>
             )}
 
-            {/* TAB 4: SKIN PROFILE & TRIAL LOOK NOTES */}
+            {/* TAB 4: SKIN PROFILE & TRIAL LOOK NOTES (WITH REAL CLIENT PHOTO UPLOAD) */}
             {activeTab === 'profile' && (
               <div className="space-y-6">
                 <div className="p-5 rounded-2xl bg-stone-900 border border-stone-800 space-y-4">
@@ -1005,6 +1010,74 @@ export const ClientPortalModal: React.FC = () => {
                     </p>
                   </div>
                 </div>
+
+                {/* OWNER QUICK UPLOAD: ADD NEW MAKEOVER PHOTO FROM DEVICE / G DRIVE FOLDER */}
+                {currentClient && (
+                  <div className="p-5 rounded-2xl bg-stone-900 border border-amber-500/40 space-y-4">
+                    <h4 className="font-serif-luxury text-base font-bold text-amber-300 flex items-center gap-2">
+                      <Camera className="w-4 h-4 text-amber-400" />
+                      <span>Owner Quick Upload: Add Real Client Makeover Photo</span>
+                    </h4>
+                    <p className="text-xs text-stone-400">
+                      Choose real client photo files directly from your computer or Google Drive sync folder to attach them to this bride's vault.
+                    </p>
+
+                    <div className="space-y-3 pt-2">
+                      <div className="space-y-1">
+                        <label className="block text-xs font-medium text-stone-300">Select Image File (From GDrive / Device)</label>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                setNewPhotoUrl(reader.result as string);
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                          className="w-full text-xs text-stone-300 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-400 file:text-stone-950 hover:file:bg-amber-300 cursor-pointer bg-stone-950 border border-stone-800 rounded-xl p-1"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="block text-xs font-medium text-stone-300">Look Title / Description</label>
+                        <input
+                          type="text"
+                          value={newPhotoTitle}
+                          onChange={(e) => setNewPhotoTitle(e.target.value)}
+                          placeholder="e.g. Wedding Pheras Royal Look"
+                          className="w-full bg-stone-950 border border-stone-800 text-stone-100 px-3 py-2 rounded-xl text-xs focus:outline-none focus:border-amber-400"
+                        />
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!newPhotoUrl) {
+                            showToast('Please choose an image file first!');
+                            return;
+                          }
+                          addClientPhoto(currentClient.id, {
+                            url: newPhotoUrl,
+                            title: newPhotoTitle || 'Bridal Vault Look',
+                            date: new Date().toISOString().split('T')[0],
+                            category: 'Studio Vault',
+                            verifiedConsent: true
+                          });
+                          setNewPhotoUrl('');
+                          setNewPhotoTitle('');
+                          showToast('Real client makeover photo uploaded successfully to vault!');
+                        }}
+                        className="w-full py-2.5 bg-amber-400 hover:bg-amber-300 text-stone-950 text-xs font-bold rounded-xl transition-all cursor-pointer shadow-md"
+                      >
+                        Save Photo to Client Vault
+                      </button>
+                    </div>
+                  </div>
+                )}
 
                 {/* Approved Look Photos */}
                 {currentClient?.photos && currentClient.photos.length > 0 && (
