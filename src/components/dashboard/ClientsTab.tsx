@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useStudio } from '../context/StudioContext';
+import { useStudio } from '../../context/StudioContext';
 import { Camera, Sparkles, User, Phone, Mail, ShieldCheck } from 'lucide-react';
 
 export const ClientsTab: React.FC = () => {
